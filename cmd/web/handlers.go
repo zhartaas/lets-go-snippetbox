@@ -1,6 +1,8 @@
 package main
 
 import (
+	"alexedwards.net/snippetbox/pkg/models"
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -40,7 +42,16 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Displaying a specific snippet %d\n", id)
+	s, err := app.snippets.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+	}
+
+	fmt.Fprintf(w, "%v", s)
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {

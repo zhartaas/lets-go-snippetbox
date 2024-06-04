@@ -59,6 +59,5 @@ func openDB(dsn string) (*sqlx.DB, error) {
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}
-
 	return db, nil
 }
